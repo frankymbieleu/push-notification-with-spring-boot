@@ -1,15 +1,14 @@
 package com.frankymbieleu.push_notification;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequestMapping("/notification")
 public class FirebaseMessagingController {
 
     private FirebaseMessagingService firebaseService;
@@ -18,23 +17,23 @@ public class FirebaseMessagingController {
         this.firebaseService = firebaseService;
     }
 
-    @RequestMapping("/send-notification")
+    @PostMapping(value = "/send")
     @ResponseBody
     public String sendNotification(@RequestBody Note note) throws FirebaseMessagingException {
         return firebaseService.sendNotification(note);
     }
 
-    @PostMapping("/subscribe")
+    @PostMapping(value = "/subscribe")
     public void subscribeToTopic(@RequestBody SubscriptionRequestDto subscriptionRequestDto) {
         firebaseService.subscribeToTopic(subscriptionRequestDto);
     }
 
-    @PostMapping("/unsubscribe")
-    public void unsubscribeFromTopic(SubscriptionRequestDto subscriptionRequestDto) {
+    @PostMapping(value = "/unsubscribe")
+    public void unsubscribeFromTopic(@RequestBody  SubscriptionRequestDto subscriptionRequestDto) {
         firebaseService.unsubscribeFromTopic(subscriptionRequestDto);
     }
 
-     @PostMapping("/topic")
+    @PostMapping(value = "/topic")
     public String sendPnsToTopic(@RequestBody Note notificationRequestDto) {
         return firebaseService.sendPnsToTopic(notificationRequestDto);
     }
