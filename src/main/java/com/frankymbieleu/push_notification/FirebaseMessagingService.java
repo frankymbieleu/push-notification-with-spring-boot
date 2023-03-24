@@ -4,6 +4,8 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidFcmOptions;
+import com.google.firebase.messaging.AndroidNotification;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -28,7 +30,16 @@ public class FirebaseMessagingService {
                 .setTitle(note.getSubject())
                 .setBody(note.getContent())
                 .build();
-        AndroidConfig androidConfig = AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build();
+        AndroidNotification androidNotification = AndroidNotification.builder().setClickAction("FLUTTER_NOTIFICATION_CLICK")
+                .setPriority(AndroidNotification.Priority.MAX)
+                .setBody(note.getContent())
+                .setTitle(note.getSubject())
+                .build();
+
+        AndroidConfig androidConfig = AndroidConfig.builder()
+                .setNotification(androidNotification)
+                .setPriority(AndroidConfig.Priority.HIGH)
+                .putAllData(note.getData()).build();
 
         Message message = Message
                 .builder()
@@ -68,8 +79,7 @@ public class FirebaseMessagingService {
         Message message = Message.builder()
                 .setTopic(notificationRequestDto.getTarget())
                 .setNotification(notification)
-                .putData("content", notificationRequestDto.getSubject())
-                .putData("body", notificationRequestDto.getContent())
+                .putAllData(notificationRequestDto.getData())
                 .build();
 
         String response = null;
